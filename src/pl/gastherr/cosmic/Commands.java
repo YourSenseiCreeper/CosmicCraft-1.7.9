@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -89,164 +90,86 @@ public class Commands implements Listener, CommandExecutor{
 	}
 	
 	public ItemStack getItemLevel(String name, int path, String itemname, Material mate, String fraction){
-		ItemStack result = null;
-		org.bukkit.Color cl = org.bukkit.Color.WHITE;
-		if (fraction.equals("Instor")){
-			cl = org.bukkit.Color.GREEN;
-		}
-		if (fraction.equals("Forter")){
-			cl = org.bukkit.Color.RED;
-		}
-		if (fraction.equals("Proter")){
-			cl = org.bukkit.Color.AQUA;
-		}
-		if (fraction.equals("Pread")){
-			cl = org.bukkit.Color.GRAY;
-		}
-		if (fraction.equals("Liga")){
-			cl = org.bukkit.Color.ORANGE;
+		ItemStack result = new ItemStack(Material.STONE);
+		Color cl = Color.WHITE;
+		
+		EnchantCC prot1 = new EnchantCC(Enchantment.PROTECTION_ENVIRONMENTAL, 1);
+		EnchantCC prot2 = new EnchantCC(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
+		
+		EnchantCC prot_fall_1 = new EnchantCC(Enchantment.PROTECTION_FALL, 1);
+		EnchantCC prot_fall_2 = new EnchantCC(Enchantment.PROTECTION_FALL, 2);
+		EnchantCC prot_fall_3 = new EnchantCC(Enchantment.PROTECTION_FALL, 3);
+		EnchantCC prot_fall_4 = new EnchantCC(Enchantment.PROTECTION_FALL, 4);
+		EnchantCC prot_fall_5 = new EnchantCC(Enchantment.PROTECTION_FALL, 5);
+		
+		EnchantCC thorns1 = new EnchantCC(Enchantment.THORNS, 1);
+		EnchantCC thorns2 = new EnchantCC(Enchantment.THORNS, 2);
+		
+		switch(fraction.toLowerCase()){
+			case "Instor":
+			{
+				cl = Color.GREEN;
+				break;
+			}
+			case "Forter":
+			{
+				cl = Color.RED;
+				break;
+			}
+			case "Proter":
+			{
+				cl = Color.AQUA;
+				break;
+			}
+			case "Pread":
+			{
+				cl = Color.GRAY;
+				break;
+			}
+			case "Liga":
+			{
+				cl = Color.ORANGE;
+			}
 		}
 		
 		if(path == 1){
-		ItemStack level1 = new ItemStack(mate);
-		ItemMeta level11 = level1.getItemMeta();
-		((LeatherArmorMeta) level11).setColor(cl);
-		level11.setDisplayName(itemname);
-		ArrayList<String> lore1 = new ArrayList<String>();
-		lore1.add(ChatColor.WHITE+"Level 1");
-		level11.setLore(lore1);
-		level11.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
-		level1.setItemMeta(level11);
-		result = level1;
+			result = itemCreator(mate, cl, itemname, ChatColor.WHITE+"Level "+path, prot1);
 		}
 		
 		if(path == 2){
-		ItemStack level2 = new ItemStack(mate);
-		ItemMeta level22 = level2.getItemMeta();
-		((LeatherArmorMeta) level22).setColor(cl);
-		level22.setDisplayName(itemname);
-		ArrayList<String> lore2 = new ArrayList<String>();
-		lore2.add(ChatColor.WHITE+"Level 2");
-		level22.setLore(lore2);
-		level22.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
-		level22.addEnchant(Enchantment.PROTECTION_FALL, 1, true);
-		level2.setItemMeta(level22);
-		result = level2;
+			result = itemCreator(mate, cl, itemname, ChatColor.WHITE+"Level "+path, prot1, prot_fall_1);
 		}
 		
 		if(path == 3){
-		ItemStack level3 = new ItemStack(mate);
-		ItemMeta level33 = level3.getItemMeta();
-		((LeatherArmorMeta) level33).setColor(cl);
-		level33.setDisplayName(itemname);
-		ArrayList<String> lore3 = new ArrayList<String>();
-		lore3.add(ChatColor.YELLOW+"Level 3");
-		level33.setLore(lore3);
-		level33.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
-		level33.addEnchant(Enchantment.PROTECTION_FALL, 1, true);
-		level3.setItemMeta(level33);
-		result = level3;
+			result = itemCreator(mate, cl, itemname, ChatColor.YELLOW+"Level "+path, prot1, prot_fall_1);
 		}
 		
 		if(path == 4){
-		ItemStack level4 = new ItemStack(mate);
-		ItemMeta level44 = level4.getItemMeta();
-		((LeatherArmorMeta) level44).setColor(cl);
-		level44.setDisplayName(itemname);
-		ArrayList<String> lore4 = new ArrayList<String>();
-		lore4.add(ChatColor.YELLOW+"Level 4");
-		level44.setLore(lore4);
-		level44.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
-		level44.addEnchant(Enchantment.PROTECTION_FALL, 2, true);
-		level4.setItemMeta(level44);
-		result = level4;
+			result = itemCreator(mate, cl, itemname, ChatColor.YELLOW+"Level "+path, prot1, prot_fall_2);
 		}
 		
 		if(path == 5){
-		ItemStack level5 = new ItemStack(mate);
-		ItemMeta level55 = level5.getItemMeta();
-		((LeatherArmorMeta) level55).setColor(cl);
-		level55.setDisplayName(itemname);
-		ArrayList<String> lore5 = new ArrayList<String>();
-		lore5.add(ChatColor.GOLD+"Level 5");
-		level55.setLore(lore5);
-		level55.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
-		level55.addEnchant(Enchantment.PROTECTION_FALL, 2, true);
-		level5.setItemMeta(level55);
-		result = level5;
+			result = itemCreator(mate, cl, itemname, ChatColor.GOLD+"Level "+path, prot1, prot_fall_2);
 		}
 		
 		if(path == 6){
-		ItemStack level6 = new ItemStack(mate);
-		ItemMeta level66 = level6.getItemMeta();
-		((LeatherArmorMeta) level66).setColor(cl);
-		level66.setDisplayName(itemname);
-		ArrayList<String> lore6 = new ArrayList<String>();
-		lore6.add(ChatColor.GOLD+"Level 6");
-		level66.setLore(lore6);
-		level66.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2, true);
-		level66.addEnchant(Enchantment.PROTECTION_FALL, 3, true);
-		level6.setItemMeta(level66);
-		result = level6;
+			result = itemCreator(mate, cl, itemname, ChatColor.GOLD+"Level "+path, prot2, prot_fall_3);
 		}
 		
 		if(path == 7){
-		ItemStack level7 = new ItemStack(mate);
-		ItemMeta level77 = level7.getItemMeta();
-		((LeatherArmorMeta) level77).setColor(cl);
-		level77.setDisplayName(itemname);
-		ArrayList<String> lore7 = new ArrayList<String>();
-		lore7.add(ChatColor.RED+"Level 7");
-		level77.setLore(lore7);
-		level77.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2, true);
-		level77.addEnchant(Enchantment.PROTECTION_FALL, 3, true);
-		level7.setItemMeta(level77);
-		result = level7;
+			result = itemCreator(mate, cl, itemname, ChatColor.RED+"Level "+path, prot2, prot_fall_3);
 		}
 		
 		if(path == 8){
-		ItemStack level8 = new ItemStack(mate);
-		ItemMeta level88 = level8.getItemMeta();
-		((LeatherArmorMeta) level88).setColor(cl);
-		level88.setDisplayName(itemname);
-		ArrayList<String> lore8 = new ArrayList<String>();
-		lore8.add(ChatColor.RED+"Level 8");
-		level88.setLore(lore8);
-		level88.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2, true);
-		level88.addEnchant(Enchantment.THORNS, 1, true);
-		level88.addEnchant(Enchantment.PROTECTION_FALL, 4, true);
-		level8.setItemMeta(level88);
-		result = level8;
+			result = itemCreator(mate, cl, itemname, ChatColor.RED+"Level "+path, prot2, thorns1, prot_fall_4);
 		}
 		
 		if(path == 9){
-		ItemStack level9 = new ItemStack(mate);
-		ItemMeta level99 = level9.getItemMeta();
-		((LeatherArmorMeta) level99).setColor(cl);
-		level99.setDisplayName(itemname);
-		ArrayList<String> lore9 = new ArrayList<String>();
-		lore9.add(ChatColor.DARK_RED+"Level 9");
-		level99.setLore(lore9);
-		level99.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2, true);
-		level99.addEnchant(Enchantment.THORNS, 1, true);
-		level99.addEnchant(Enchantment.PROTECTION_FALL, 4, true);
-		level9.setItemMeta(level99);
-		result = level9;
+			result = itemCreator(mate, cl, itemname, ChatColor.DARK_RED+"Level "+path, prot2, thorns1, prot_fall_4);
 		}
 		
 		if(path == 10){
-		ItemStack level10 = new ItemStack(mate);
-		ItemMeta level1010 = level10.getItemMeta();
-		((LeatherArmorMeta) level1010).setColor(cl);
-		level1010.setDisplayName(itemname);
-		ArrayList<String> lore10 = new ArrayList<String>();
-		lore10.add(ChatColor.DARK_RED+""+ChatColor.BOLD+"Level 10");
-		level1010.setLore(lore10);
-		level1010.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2, true);
-		level1010.addEnchant(Enchantment.THORNS, 2, true);
-		level1010.addEnchant(Enchantment.PROTECTION_FALL, 5, true);
-		level10.setItemMeta(level1010);
-		result = level10;
+			result = itemCreator(mate, cl, itemname, ChatColor.DARK_RED+""+ChatColor.BOLD+"Level "+path, prot2, thorns2, prot_fall_5);
 		}
 		
 		return result;
@@ -1081,7 +1004,50 @@ public class Commands implements Listener, CommandExecutor{
 			}
 		return false;
 	}
+	
+	private ItemStack itemCreator(Material mate, Color cl, String itemname, String lore, EnchantCC... ench){
+		ItemStack level = new ItemStack(mate);
+		ItemMeta levelM = level.getItemMeta();
+		((LeatherArmorMeta) levelM).setColor(cl);
+		levelM.setDisplayName(itemname);
+		ArrayList<String> lore1 = new ArrayList<String>();
+		lore1.add(lore);
+		levelM.setLore(lore1);
+		
+		for(EnchantCC e : ench){
+			levelM.addEnchant(e.getEnch(), e.getLevel(), true);
+		}
+		
+		level.setItemMeta(levelM);
+		return level;
+	}
 
 	
 	
+}
+class EnchantCC {
+	
+	private Enchantment ench;
+	private int level;
+	
+	public EnchantCC(Enchantment ench, int level) {
+		this.ench = ench;
+		this.level = level;
+	}
+
+	public Enchantment getEnch() {
+		return ench;
+	}
+
+	public void setEnch(Enchantment ench) {
+		this.ench = ench;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
 }
