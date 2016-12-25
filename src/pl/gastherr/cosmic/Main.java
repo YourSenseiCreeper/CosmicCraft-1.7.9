@@ -11,37 +11,21 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.*;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scoreboard.*;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-
-import pl.gastherr.cosmic.events.DropItem;
-import pl.gastherr.cosmic.events.ChatSay;
-import pl.gastherr.cosmic.events.EntityDamage;
-import pl.gastherr.cosmic.player.Gracz;
-import pl.gastherr.cosmic.events.PlayerJoin;
-import pl.gastherr.cosmic.events.Signs;
-import pl.gastherr.cosmic.events.ItemsAfterDeath;
 import pl.gastherr.cosmic.ServerStats;
-import pl.gastherr.cosmic.events.NPCInteract;
-import pl.gastherr.cosmic.events.PlayerMove;
-import pl.gastherr.cosmic.events.PickupItem;
+import pl.gastherr.cosmic.player.Gracz;
+import pl.gastherr.cosmic.player.Staty;
+import pl.gastherr.cosmic.events.*;
 
 public class Main extends JavaPlugin implements Listener{
 
 	DropItem DropItem;
 	Commands Commands;
 	ChatSay ChatSay;
-	PlayerJoin PlayerJoin;
+	public PlayerJoin PlayerJoin;
 	Gracz Gracz;
 	Signs Signs;
 	ItemsAfterDeath ItemsAfterDeath;
@@ -49,13 +33,8 @@ public class Main extends JavaPlugin implements Listener{
 	NPCInteract NPCInteract;
 	PlayerMove PlayerMove;
 	PickupItem PickupItem;
+	private API api;
 	public ServerStats statystyki;
-    private static final WorldGuardPlugin wg = WorldGuardPlugin.inst();
-    
-    public static WorldGuardPlugin getWg()
-    {
-        return wg;
-    }
     
     
 	public String fixColors(String msg){
@@ -63,22 +42,23 @@ public class Main extends JavaPlugin implements Listener{
 	}
 	
 	public void loadServerData(){
-		double kasa = getPluginConfig().getDouble("StatystykiSerwerowe.Kasa");
-		double wydanaKasa = getPluginConfig().getDouble("StatystykiSerwerowe.WydanaKasa");
-		double zarobionaKasa = getPluginConfig().getDouble("StatystykiSerwerowe.ZarobionaKasa");
-		double otrzymanaKasa = getPluginConfig().getDouble("StatystykiSerwerowe.OtrzymanaKasa");
-		int wykonanePrzelewy = getPluginConfig().getInt("StatystykiSerwerowe.WykonanePrzelewy");
-		double przelanaKasa = getPluginConfig().getDouble("StatystykiSerwerowe.PrzelanaKasa");
+		String prefix = "StatystykiSerwerowe.";
+		double kasa = getPluginConfig().getDouble(prefix+"Kasa");
+		double wydanaKasa = getPluginConfig().getDouble(prefix+"WydanaKasa");
+		double zarobionaKasa = getPluginConfig().getDouble(prefix+"ZarobionaKasa");
+		double otrzymanaKasa = getPluginConfig().getDouble(prefix+"OtrzymanaKasa");
+		int wykonanePrzelewy = getPluginConfig().getInt(prefix+"WykonanePrzelewy");
+		double przelanaKasa = getPluginConfig().getDouble(prefix+"PrzelanaKasa");
 		
-		int kupione_mechanizmy = getPluginConfig().getInt("StatystykiSerwerowe.KupioneMechanizmy");
-		int aktywowane_mechanizmy = getPluginConfig().getInt("StatystykiSerwerowe.AktywowaneMechanizmy");
+		int kupione_mechanizmy = getPluginConfig().getInt(prefix+"KupioneMechanizmy");
+		int aktywowane_mechanizmy = getPluginConfig().getInt(prefix+"AktywowaneMechanizmy");
 
-		int frakcjaInstor = getPluginConfig().getInt("StatystykiSerwerowe.FrakcjaInstor");
-		int frakcjaForter = getPluginConfig().getInt("StatystykiSerwerowe.FrakcjaForter");
-		int frakcjaProter = getPluginConfig().getInt("StatystykiSerwerowe.FrakcjaProter");
-		int frakcjaPread = getPluginConfig().getInt("StatystykiSerwerowe.FrakcjaPread");
+		int frakcjaInstor = getPluginConfig().getInt(prefix+"FrakcjaInstor");
+		int frakcjaForter = getPluginConfig().getInt(prefix+"FrakcjaForter");
+		int frakcjaProter = getPluginConfig().getInt(prefix+"FrakcjaProter");
+		int frakcjaPread = getPluginConfig().getInt(prefix+"FrakcjaPread");
 		
-		int liczbaOdwiedzin = getPluginConfig().getInt("StatystykiSerwerowe.LiczbaOdwiedzin");
+		int liczbaOdwiedzin = getPluginConfig().getInt(prefix+"LiczbaOdwiedzin");
 		
 	    ServerStats server = new ServerStats(kasa, wydanaKasa, zarobionaKasa, otrzymanaKasa, wykonanePrzelewy,
 	    		przelanaKasa, kupione_mechanizmy, aktywowane_mechanizmy, frakcjaInstor, frakcjaForter,
@@ -125,35 +105,36 @@ public class Main extends JavaPlugin implements Listener{
 	public void saveUser(String name){
 		
 		Gracz g = pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(name);
+		Staty s = g.getStaty();
 		
-		float exp = g.getStaty().getExp();
-		int lvl = g.getStaty().getLevel();
+		float exp = s.getExp();
+		int lvl = s.getLevel();
 		int pktpostepu = g.getPktPostepu();
-		double kasa = g.getStaty().getKasa();
-		double wydanaKasa = g.getStaty().getWydanaKasa();
-		double zarobionaKasa = g.getStaty().getZarobionaKasa();
-		double przelanaKasa = g.getStaty().getPrzelanaKasa();
-		double zgubionaKasa = g.getStaty().getZarobionaKasa();
-		double otrzymanaKasa = g.getStaty().getOtrzymanaKasa();
-		int wykonanePrzelewy = g.getStaty().getWykonanePrzelewy();
+		double kasa = s.getKasa();
+		double wydanaKasa = s.getWydanaKasa();
+		double zarobionaKasa = s.getZarobionaKasa();
+		double przelanaKasa = s.getPrzelanaKasa();
+		double zgubionaKasa = s.getZarobionaKasa();
+		double otrzymanaKasa = s.getOtrzymanaKasa();
+		int wykonanePrzelewy = s.getWykonanePrzelewy();
 		boolean sound_exp = g.getSoundExp();
 		boolean sound_lvlup = g.getSoundLvlup();
 		boolean sound_teleport = g.getSoundTeleport();
 		boolean scoreboard_show = g.getScoreboardShow();
 		boolean sound_chat = g.getSoundChat();
-		int mieczLvl = g.getStaty().getMieczLvl();
-		int helmLvl = g.getStaty().getHelmLvl();
-		int klataLvl = g.getStaty().getKlataLvl();
-		int spodnieLvl = g.getStaty().getSpodnieLvl();
-		int butyLvl = g.getStaty().getButyLvl();
-		int zabojstwa = g.getStaty().getZabojstwa();
-		int smierci = g.getStaty().getSmierci();
-		int aktywowane_mechanizmy = g.getStaty().getAktywowaneMechanizmy();
+		int mieczLvl = s.getMieczLvl();
+		int helmLvl = s.getHelmLvl();
+		int klataLvl = s.getKlataLvl();
+		int spodnieLvl = s.getSpodnieLvl();
+		int butyLvl = s.getButyLvl();
+		int zabojstwa = s.getZabojstwa();
+		int smierci = s.getSmierci();
+		int aktywowane_mechanizmy = s.getAktywowaneMechanizmy();
 		
-		int uz_instor = g.getStaty().getUzyciaInstor();
-		int uz_forter = g.getStaty().getUzyciaForter();
-		int uz_proter = g.getStaty().getUzyciaProter();
-		int uz_pread = g.getStaty().getUzyciaPread();
+		int uz_instor = s.getUzyciaInstor();
+		int uz_forter = s.getUzyciaForter();
+		int uz_proter = s.getUzyciaProter();
+		int uz_pread = s.getUzyciaPread();
 		
 		getGraczConfig(name).set("Dane.Exp", exp);
 		getGraczConfig(name).set("Dane.PktPostepu", pktpostepu);
@@ -188,6 +169,7 @@ public class Main extends JavaPlugin implements Listener{
 
 	@Override
 	public void onEnable() {
+		api = new API(this);
 		Commands = new Commands(this);
 		ChatSay = new ChatSay(this);
 		PlayerJoin = new PlayerJoin(this);
@@ -395,10 +377,10 @@ public class Main extends JavaPlugin implements Listener{
 	}
 
 	public void addToGraczConfig(String name){
-		
-		if (!getGraczConfig(name).contains("Dane")){
-			getGraczConfig(name).createSection("Dane");
-			getGraczConfig(name).createSection("Dane.Level");
+		FileConfiguration g = getGraczConfig(name);
+		if (!g.contains("Dane")){
+			g.createSection("Dane");
+			g.createSection("Dane.Level");
 			getGraczConfig(name).set("Dane.Level", 0);
 			getGraczConfig(name).createSection("Dane.PktPostepu");
 			getGraczConfig(name).set("Dane.PktPostepu", 0);
@@ -541,6 +523,10 @@ public class Main extends JavaPlugin implements Listener{
 		}else{
 			p.setScoreboard(board);
 		}
+	}
+
+	public API getApi() {
+		return api;
 	}
 	
 	

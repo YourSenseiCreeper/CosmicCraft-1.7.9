@@ -39,6 +39,26 @@ public class InvCreator {
 			if (page == 1){
 				
 			}
+			
+			String[] mechs = {"Heal", "Speed", "Jump", "Power"};
+			for(String mech : mechs){
+				ItemStack level1 = null;
+				ItemStack level2  = null;
+				ItemStack level3  = null;
+				
+				// DELETE THIS
+				for (int i = 1; i < 3; i++){
+					if (i==1){
+						select(5, lvl, i, frakcja, mech);
+					}
+					if (i==2){
+						select(10, lvl, i, frakcja, mech);
+					}
+					if (i==3){
+						select(15, lvl, i, frakcja, mech);
+					}
+				}
+			}
 			ItemStack healer1 = null;
 			ItemStack healer2 = null;
 			ItemStack healer3 = null;
@@ -160,39 +180,16 @@ public class InvCreator {
 			ItemStack power1 = null;
 			ItemStack power2 = null;
 			ItemStack power3 = null;
+			String mech = "Power";
 			for (int i = 1; i < 3; i++){
 				if (i==1){
-					if (lvl >= 3){
-						if (frakcja.equalsIgnoreCase("instor")){
-							power1 = Signs.getByName(instored, "Power:"+i);
-						}else{
-							power1 = Signs.getByName(normal, "Power:"+i);
-						}
-					}else{
-						power1 = Signs.getByName(nolvl, "Power:"+i);
-					}
+					select(3, lvl, i, frakcja, mech);
 				}
 				if (i==2){
-					if (lvl >= 8){
-						if (frakcja.equalsIgnoreCase("instor")){
-							power2 = Signs.getByName(instored, "Power:"+i);
-						}else{
-							power2 = Signs.getByName(normal, "Power:"+i);
-						}
-					}else{
-						power2 = Signs.getByName(nolvl, "Power:"+i);
-					}
+					select(8, lvl, i, frakcja, mech);
 				}
 				if (i==3){
-					if (lvl >= 13){
-						if (frakcja.equalsIgnoreCase("instor")){
-							power3 = Signs.getByName(instored, "Power:"+i);
-						}else{
-							power3 = Signs.getByName(normal, "Power:"+i);
-						}
-					}else{
-						power3 = Signs.getByName(nolvl, "Power:"+i);
-					}
+					select(13, lvl, i, frakcja, mech);
 				}
 			}
 			
@@ -251,6 +248,20 @@ public class InvCreator {
 		p.openInventory(inv);
 		PlayerJoin.listaGraczy.get(puid).getWalka().setChosingItem(false);
 		
+	}
+	
+	private ItemStack select(int minimalLvl, int lvl, int number, String frakcja, String mech){
+		ItemStack ret = null;
+		if (lvl >= minimalLvl){
+			if (frakcja.equalsIgnoreCase("instor")){
+				ret = Signs.getByName(ItemType.INSTORED, mech+number);
+			}else{
+				ret = Signs.getByName(ItemType.NORMAL, mech+number);
+			}
+		}else{
+			ret = Signs.getByName(ItemType.NOLVL, mech+number);
+		}
+		return ret;
 	}
 	
 }

@@ -27,23 +27,23 @@ public class ChatSay implements Listener{
 		Player p = e.getPlayer();
 		String name = p.getName();
 		String lvl = ChatColor.DARK_GRAY+"["+ChatColor.AQUA+p.getLevel()+" lvl"+ChatColor.DARK_GRAY+"] "+ChatColor.RESET;
-		String pPrefix = "";
+		
+		String in = "";
+		String pPrefix = ChatColor.DARK_GRAY+"["+ChatColor.YELLOW+in+ChatColor.DARK_GRAY+"] ";
+		
 		if (plugin.getPluginConfig().getStringList("KidMods").contains(name)){
-			pPrefix = ChatColor.DARK_GRAY+"["+ChatColor.YELLOW+"▌"+ChatColor.DARK_GRAY+"] ";
+			in = "▌";
 		}
-		if (plugin.getPluginConfig().getStringList("Mods").contains(name)){
-			pPrefix = ChatColor.DARK_GRAY+"["+ChatColor.GOLD+"▌▌"+ChatColor.DARK_GRAY+"] ";
+		else if (plugin.getPluginConfig().getStringList("Mods").contains(name)){
+			in = "▌▌";
 		}
-		if (plugin.getPluginConfig().getStringList("Admins").contains(name)){
-			pPrefix = ChatColor.DARK_GRAY+"["+ChatColor.RED+"▌▌▌"+ChatColor.DARK_GRAY+"] ";
+		else if (plugin.getPluginConfig().getStringList("Admins").contains(name)){
+			in = "▌▌▌";
 		}
-		if (plugin.getPluginConfig().getStringList("HAdmins").contains(name)){
-			pPrefix = ChatColor.DARK_GRAY+"["+ChatColor.DARK_RED+"▌▌▌▌"+ChatColor.DARK_GRAY+"] ";
+		else if (plugin.getPluginConfig().getStringList("HAdmins").contains(name)){
+			in = "▌▌▌▌";
 		}
-		if (!plugin.getPluginConfig().getStringList("KidMods").contains(name) &&
-			!plugin.getPluginConfig().getStringList("Mods").contains(name) &&
-			!plugin.getPluginConfig().getStringList("Admins").contains(name) &&
-			!plugin.getPluginConfig().getStringList("HAdmins").contains(name)){
+		else{
 			pPrefix = lvl;
 		}
 		String pointer = ChatColor.BOLD+" » ";

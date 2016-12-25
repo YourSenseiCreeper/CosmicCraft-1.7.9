@@ -17,21 +17,22 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import pl.gastherr.cosmic.API;
 import pl.gastherr.cosmic.Main;
 import pl.gastherr.cosmic.events.PlayerJoin;
 import pl.gastherr.cosmic.events.NPCInteract;
+import pl.gastherr.cosmic.player.Gracz;
 
 public class ItemsAfterDeath implements Listener{
 
-	PlayerJoin PlayerJoin;
-	Main plugin;
-	pl.gastherr.cosmic.API API;
-	HashMap<String, ItemStack[]> invBefore = new HashMap<String, ItemStack[]>();
-	HashMap<String, Float> expAfter = new HashMap<String, Float>();
+	static Main plugin;
+	static HashMap<String, Gracz> players = pl.gastherr.cosmic.events.PlayerJoin.listaGraczy;
+	static HashMap<String, ItemStack[]> invBefore = new HashMap<String, ItemStack[]>();
+	static HashMap<String, Float> expAfter = new HashMap<String, Float>();
 	
-	public ItemsAfterDeath (Main plugin){
-		this.plugin = plugin;
-	    plugin.getServer().getPluginManager().registerEvents(this, plugin);
+	public ItemsAfterDeath (Main main){
+		plugin = main;
+	    main.getServer().getPluginManager().registerEvents(this, main);
 	}
 	
 	NPCInteract inter = new NPCInteract(plugin);
@@ -45,23 +46,25 @@ public class ItemsAfterDeath implements Listener{
 		e.setDeathMessage(null);
 		e.setKeepLevel(true);
 		
+		
+		
 		if (e.getEntity() instanceof Player && e.getEntity().getKiller() != null){
 			UUID kUd = e.getEntity().getKiller().getUniqueId();
 			String kuid = kUd.toString();
 			String kname = e.getEntity().getKiller().getName();
 			Player killer = e.getEntity().getKiller();
-			int lvlKiller = pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(kuid).getStaty().getLevel();
-			String kFrakcja = pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(kuid).getFrakcja();
+			int lvlKiller = players.get(kuid).getStaty().getLevel();
+			String kFrakcja = players.get(kuid).getFrakcja();
 			
 			Player frager = (Player) e.getEntity();
 			String fname = frager.getName();
 			UUID fUd = frager.getUniqueId();
 			String fuid = fUd.toString();
-			int lvlFrager = pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(fuid).getStaty().getLevel();
-			double fKasa = pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(fuid).getStaty().getKasa();
-			double fZarobionaKasa = pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(fuid).getStaty().getZarobionaKasa();
+			int lvlFrager = players.get(fuid).getStaty().getLevel();
+			double fKasa = players.get(fuid).getStaty().getKasa();
+			double fZarobionaKasa = players.get(fuid).getStaty().getZarobionaKasa();
 			ItemStack[] invFrager = frager.getInventory().getContents().clone();
-			float exp = pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(fuid).getStaty().getExp();
+			float exp = players.get(fuid).getStaty().getExp();
 			invBefore.put(fname, invFrager);
 			e.getDrops().clear();
 			e.setDroppedExp(0);
@@ -77,7 +80,7 @@ public class ItemsAfterDeath implements Listener{
 				}
 				expAfter.put(fname, dropExp);
 			}
-			pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(fuid).getStaty().setExp(dropExp);
+			players.get(fuid).getStaty().setExp(dropExp);
 			frager.setExp(dropExp);
 			double pocieszenie = 0;
 			if (lvlFrager > 0){
@@ -85,9 +88,9 @@ public class ItemsAfterDeath implements Listener{
 			}else{
 				pocieszenie = 5;
 			}
-   			pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(fuid).getStaty().setSmierci(pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(fuid).getStaty().getSmierci()+1);
-			pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(fuid).getStaty().setKasa(fKasa + pocieszenie);
-			pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(fuid).getStaty().setOtrzymanaKasa(fZarobionaKasa+pocieszenie);
+			players.get(fuid).getStaty().setSmierci(players.get(fuid).getStaty().getSmierci()+1);
+			players.get(fuid).getStaty().setKasa(fKasa + pocieszenie);
+			players.get(fuid).getStaty().setOtrzymanaKasa(fZarobionaKasa+pocieszenie);
 			frager.sendMessage(ChatColor.GRAY+"Zostales zabity przez "+ChatColor.GOLD+kname+
 					" "+ChatColor.GRAY+"["+ChatColor.GOLD+lvlKiller+" lvl"+ChatColor.GRAY+"] "+
 					ChatColor.GREEN+"+"+pocieszenie+" cc"+ChatColor.RED+" -"+dropExp);
@@ -155,7 +158,7 @@ public class ItemsAfterDeath implements Listener{
 				Player p = (Player) e.getEntity();
 				String puid = p.getUniqueId().toString();
 				ItemStack[] invFrager = p.getInventory().getContents().clone();
-				float exp = pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(puid).getStaty().getExp();
+				float exp = players.get(puid).getStaty().getExp();
 				invBefore.put(p.getName(), invFrager);
 				e.getDrops().clear();
 				e.setDroppedExp(0);
@@ -166,9 +169,9 @@ public class ItemsAfterDeath implements Listener{
 					dropExp = exp - (exp / 4);
 				}
 				expAfter.put(p.getName(), dropExp);
-				pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(puid).getStaty().setExp(dropExp);
+				players.get(puid).getStaty().setExp(dropExp);
 				p.setExp(dropExp);
-				pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(puid).getStaty().setSmierci(pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(puid).getStaty().getSmierci()+1);
+				players.get(puid).getStaty().setSmierci(players.get(puid).getStaty().getSmierci()+1);
 				p.sendMessage(ChatColor.GRAY+"Zostales zabity przez "+ChatColor.GOLD+"grawitacje"+
 						" "+ChatColor.GRAY+"["+ChatColor.GOLD+"X"+" lvl"+ChatColor.GRAY+"] "+
 						ChatColor.GREEN+"+"+"0.0"+" cc"+ChatColor.RED+" -"+dropExp);
@@ -206,11 +209,11 @@ public class ItemsAfterDeath implements Listener{
 		
 		String puid = p.getUniqueId().toString();
 		
-		ItemStack sword = pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(puid).getWalka().getSword();
+		ItemStack sword = players.get(puid).getWalka().getSword();
 		p.getInventory().remove(sword);
 		
 		double zwrot = 0.0;
-		ArrayList<ItemStack> itemy = pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(puid).getWalka().getMechList();
+		ArrayList<ItemStack> itemy = players.get(puid).getWalka().getMechList();
 		for (int i = 0; i < itemy.size(); i++){
 			ItemStack item = itemy.get(i);
 			if (item.equals(heal1)){

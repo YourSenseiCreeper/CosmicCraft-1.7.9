@@ -2,34 +2,31 @@ package pl.gastherr.cosmic.events;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.gmail.bukkitsmerf.check.Check;
-import com.gmail.bukkitsmerf.check.IPlayersStorage;
+//import com.gmail.bukkitsmerf.check.Check;
+//import com.gmail.bukkitsmerf.check.IPlayersStorage;
 
 import pl.gastherr.cosmic.Main;
 import pl.gastherr.cosmic.player.Gracz;
 import pl.gastherr.cosmic.player.Menu;
 import pl.gastherr.cosmic.player.Walka;
 import pl.gastherr.cosmic.player.Staty;
-import pl.gastherr.cosmic.ServerStats;
 import pl.gastherr.cosmic.util.MenuType;
 
 public class PlayerJoin implements Listener{
 	
 	Main plugin;
-	Gracz Gracz;
-	Walka Walka;
-	Staty Staty;
-	ServerStats ServerStats;
 	public static HashMap<String, Gracz> listaGraczy = new HashMap<String, Gracz>();
 	
 	public PlayerJoin (Main plugin){
@@ -39,42 +36,51 @@ public class PlayerJoin implements Listener{
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e){
-
+		
+		//Player data
 		Player p = e.getPlayer();
 		UUID pU = p.getUniqueId();
 		String puid = pU.toString();
 		String name = p.getName();
+		
+		//Loading & registring player
 		plugin.registerGraczConfig(puid);
 		plugin.addToGraczConfig(puid);
 		loadUser(puid);
+		
 		e.setJoinMessage(ChatColor.GOLD+p.getName()+ChatColor.GRAY+" dolaczyl do gry!");
-		IPlayersStorage storage = Check.getStorage();
-		ArrayList<String> kmods = (ArrayList<String>) plugin.getPluginConfig().getStringList("KidMods");
-		ArrayList<String> mods = (ArrayList<String>) plugin.getPluginConfig().getStringList("Mods");
-		ArrayList<String> admins = (ArrayList<String>) plugin.getPluginConfig().getStringList("Admins");
-		ArrayList<String> hadmins = (ArrayList<String>) plugin.getPluginConfig().getStringList("HAdmins");
+		//IPlayersStorage storage = Check.getStorage();
+		List<String> kmods = plugin.getPluginConfig().getStringList("KidMods");
+		List<String> mods = plugin.getPluginConfig().getStringList("Mods");
+		List<String> admins = plugin.getPluginConfig().getStringList("Admins");
+		List<String> hadmins = plugin.getPluginConfig().getStringList("HAdmins");
 		String plist = "";
 		if (kmods.contains(name)){
 			plist = ChatColor.YELLOW+name;
 		}
-		if (mods.contains(name)){
+		else if (mods.contains(name)){
 			plist = ChatColor.GOLD+name;
 		}
-		if (admins.contains(name)){
+		else if (admins.contains(name)){
 			plist = ChatColor.RED+name;
 		}
-		if (hadmins.contains(name)){
+		else if (hadmins.contains(name)){
 			plist = ChatColor.DARK_RED+name;
 		}
-		if (!kmods.contains(name) && !mods.contains(name) && !admins.contains(name) && !hadmins.contains(name)){
+		else	//default
+		{
 			plist = ChatColor.GRAY+name;
 		}
-		p.setPlayerListName(plist);
+		
+		/**Logging in & checking premium
 		if (storage.isPremium(name)){
 			p.sendMessage(ChatColor.GRAY+"Dolaczasz z konta premium. "+ChatColor.GREEN+"Nie musisz sie logowac!");
 		}else{
 			p.sendMessage(ChatColor.GRAY+"Dolaczasz z konta no-premium.");
 		}
+		*/
+		
+		p.setPlayerListName(plist);
 		e.getPlayer().setLevel(listaGraczy.get(puid).getStaty().getLevel());
 		e.getPlayer().setExp((float) listaGraczy.get(puid).getStaty().getExp());
 		for(Player on : Bukkit.getOnlinePlayers()){
@@ -84,32 +90,39 @@ public class PlayerJoin implements Listener{
 	}
 	
 	public void loadUser(String name){
-		float exp = (float) plugin.getGraczConfig(name).getDouble("Dane.Exp");
-		int lvl = plugin.getGraczConfig(name).getInt("Dane.Level");
-		int pktpostepu = plugin.getGraczConfig(name).getInt("Dane.PktPostepu");
-		double kasa = plugin.getGraczConfig(name).getDouble("Dane.Ekonomia.Kasa");
-		double wydanaKasa = plugin.getGraczConfig(name).getDouble("Dane.Ekonomia.WydanaKasa");
-		double zarobionaKasa = plugin.getGraczConfig(name).getDouble("Dane.Ekonomia.ZarobionaKasa");
-		double przelanaKasa = plugin.getGraczConfig(name).getDouble("Dane.Ekonomia.PrzelanaKasa");
-		double otrzymanaKasa = plugin.getGraczConfig(name).getDouble("Dane.Ekonomia.OtrzymanaKasa");
-		int wykonanePrzelewy = plugin.getGraczConfig(name).getInt("Dane.Ekonomia.WykonanePrzelewy");
-		boolean sound_exp = plugin.getGraczConfig(name).getBoolean("Dane.Opcje.Dzwiek.Exp");
-		boolean sound_lvlup = plugin.getGraczConfig(name).getBoolean("Dane.Opcje.Dzwiek.LvlUp");
-		boolean sound_teleport = plugin.getGraczConfig(name).getBoolean("Dane.Opcje.Dzwiek.Teleport");
-		boolean scoreboard_show = plugin.getGraczConfig(name).getBoolean("Dane.Opcje.Scoreboard.Pokaz");
-		boolean sound_chat = plugin.getGraczConfig(name).getBoolean("Dane.Opcje.Dzwiek.Chat");
-		int mieczLvl = plugin.getGraczConfig(name).getInt("Dane.Inwentarz.MieczLvl");
-		int helmLvl = plugin.getGraczConfig(name).getInt("Dane.Inwentarz.HelmLvl");
-		int klataLvl = plugin.getGraczConfig(name).getInt("Dane.Inwentarz.KlataLvl");
-		int spodnieLvl = plugin.getGraczConfig(name).getInt("Dane.Inwentarz.SpodnieLvl");
-		int butyLvl = plugin.getGraczConfig(name).getInt("Dane.Inwentarz.ButyLvl");
-		int zabojstwa = plugin.getGraczConfig(name).getInt("Dane.Statystyki.Zabojstwa");
-		int smierci = plugin.getGraczConfig(name).getInt("Dane.Statystyki.Smierci");
-		int aktywowane_mechanizmy = plugin.getGraczConfig(name).getInt("Dane.Statystyki.AktywowaneMechanizmy");
-		int uz_instor = plugin.getGraczConfig(name).getInt("Dane.Uzycia.Instor");
-		int uz_forter = plugin.getGraczConfig(name).getInt("Dane.Uzycia.Forter");
-		int uz_proter = plugin.getGraczConfig(name).getInt("Dane.Uzycia.Proter");
-		int uz_pread = plugin.getGraczConfig(name).getInt("Dane.Uzycia.Pread");
+		FileConfiguration player = plugin.getGraczConfig(name);
+		
+		float exp = (float) player.getDouble("Dane.Exp");
+		int lvl = player.getInt("Dane.Level");
+		int pktpostepu = player.getInt("Dane.PktPostepu");
+		double kasa = player.getDouble("Dane.Ekonomia.Kasa");
+		double wydanaKasa = player.getDouble("Dane.Ekonomia.WydanaKasa");
+		double zarobionaKasa = player.getDouble("Dane.Ekonomia.ZarobionaKasa");
+		double przelanaKasa = player.getDouble("Dane.Ekonomia.PrzelanaKasa");
+		double otrzymanaKasa = player.getDouble("Dane.Ekonomia.OtrzymanaKasa");
+		int wykonanePrzelewy = player.getInt("Dane.Ekonomia.WykonanePrzelewy");
+		
+		boolean sound_exp = player.getBoolean("Dane.Opcje.Dzwiek.Exp");
+		boolean sound_lvlup = player.getBoolean("Dane.Opcje.Dzwiek.LvlUp");
+		boolean sound_teleport = player.getBoolean("Dane.Opcje.Dzwiek.Teleport");
+		boolean scoreboard_show = player.getBoolean("Dane.Opcje.Scoreboard.Pokaz");
+		boolean sound_chat = player.getBoolean("Dane.Opcje.Dzwiek.Chat");
+		
+		int mieczLvl = player.getInt("Dane.Inwentarz.MieczLvl");
+		int helmLvl = player.getInt("Dane.Inwentarz.HelmLvl");
+		int klataLvl = player.getInt("Dane.Inwentarz.KlataLvl");
+		int spodnieLvl = player.getInt("Dane.Inwentarz.SpodnieLvl");
+		int butyLvl = player.getInt("Dane.Inwentarz.ButyLvl");
+		
+		int zabojstwa = player.getInt("Dane.Statystyki.Zabojstwa");
+		int smierci = player.getInt("Dane.Statystyki.Smierci");
+		int aktywowane_mechanizmy = player.getInt("Dane.Statystyki.AktywowaneMechanizmy");
+		
+		int uz_instor = player.getInt("Dane.Uzycia.Instor");
+		int uz_forter = player.getInt("Dane.Uzycia.Forter");
+		int uz_proter = player.getInt("Dane.Uzycia.Proter");
+		int uz_pread = player.getInt("Dane.Uzycia.Pread");
+		
 		ArrayList<String> activeMech = new ArrayList<String>();
 		ArrayList<ItemStack> mechList = new ArrayList<ItemStack>();
 		MenuType mType = pl.gastherr.cosmic.util.MenuType.NULL;
@@ -124,5 +137,9 @@ public class PlayerJoin implements Listener{
 				scoreboard_show, false);
 		listaGraczy.put(name, gr);
 }
+
+	public HashMap<String, Gracz> getListaGraczy() {
+		return listaGraczy;
+	}
 	
 }

@@ -21,12 +21,13 @@ import org.bukkit.potion.PotionEffectType;
 
 import pl.gastherr.cosmic.Main;
 import pl.gastherr.cosmic.ServerStats;
+import pl.gastherr.cosmic.player.Gracz;
 import pl.gastherr.cosmic.util.ItemType;
 
 public class Signs implements Listener{
 	   
 	Main plugin;
-	pl.gastherr.cosmic.events.PlayerJoin PlayerJoin;
+	HashMap<String, Gracz> players = plugin.PlayerJoin.getListaGraczy();
 	ServerStats ServerStats;
 	
 	   public Signs (Main plugin){
@@ -48,28 +49,32 @@ public class Signs implements Listener{
 	   
 	   static HashMap<String, ItemStack> itemy = new HashMap<String, ItemStack>();
 			
+	   private ItemStack newItem(String mechName, int level, String loreS, boolean blocked, int minimalLvl){
+		   ItemStack item = new ItemStack(Material.PAPER);
+			ItemMeta mitem = item.getItemMeta();
+			String addition = blocked ? ChatColor.RED+" (Zablokowane)" : "";
+			mitem.setDisplayName(ChatColor.GRAY+"Mechanizm: "+ChatColor.AQUA+mechName+" "+level+addition);
+			ArrayList<String> lore = new ArrayList<String>();
+			lore.add(ChatColor.GRAY+loreS);
+			if(blocked){
+				lore.add(ChatColor.GRAY+"Dostepne od poziomu "+ChatColor.RED+minimalLvl);
+			}
+			mitem.setLore(lore);
+			item.setItemMeta(mitem);
+			if(blocked)
+			{
+				itemy.put(mechName+":"+level+"B", item);
+			}
+			else
+			{
+				itemy.put(mechName+":"+level, item);
+			}
+			return item;
+	   }
 		   public void registerItems(){
 				
-				ItemStack item3 = new ItemStack(Material.PAPER);
-				ItemMeta mitem3 = item3.getItemMeta();
-				mitem3.setDisplayName(ChatColor.GRAY+"Mechanizm: "+ChatColor.AQUA+"Heal 1");
-				ArrayList<String> lore3 = new ArrayList<String>();
-				lore3.add(ChatColor.GRAY+"Leczy przez 5 sekund");
-				mitem3.setLore(lore3);
-				item3.setItemMeta(mitem3);
-				itemy.put("Heal:1", item3);
-				
-				ItemStack item31 = new ItemStack(Material.PAPER);
-				ItemMeta mitem31 = item31.getItemMeta();
-				mitem31.setDisplayName(ChatColor.GRAY+"Mechanizm: "+ChatColor.AQUA+"Heal 1"+ChatColor.RED+" (Zablokowane)");
-				ArrayList<String> lore31 = new ArrayList<String>();
-				lore31.add(ChatColor.GRAY+"Leczy przez pewien czas");
-				lore31.add(ChatColor.GRAY+"Dostepne od poziomu "+ChatColor.RED+"5");
-				mitem31.setLore(lore31);
-				item31.setItemMeta(mitem31);
-				itemy.put("Heal:1B", item31);
-				
-				ItemStack item32 = item3;
+				ItemStack item32 = newItem("Heal", 1, "Leczy przez 5 sekund", false, 0);
+				newItem("Heal", 1, "Leczy przez 5 sekund", true, 5);
 				item32.setType(Material.INK_SACK);
 				item32.setDurability((short) 10);
 				itemy.put("Heal:1S", item32);
@@ -867,7 +872,7 @@ public class Signs implements Listener{
 					|| p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GRAY+"Mechanizm: "+ChatColor.AQUA+"Power 3"))){
 				if (activeMech.size() == 0){
 			     		plugin.statystyki.setAktywowaneMechanizmy(plugin.statystyki.getAktywowaneMechanizmy()+1);
-            			pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(puid).getStaty().setAktywowaneMechanizmy(pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(puid).getStaty().getAktywowaneMechanizmy()+1);
+            			players.get(puid).getStaty().setAktywowaneMechanizmy(pl.gastherr.cosmic.events.PlayerJoin.listaGraczy.get(puid).getStaty().getAktywowaneMechanizmy()+1);
 						String prefixItem = "";
 						String itemName = "";
 						if (p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GRAY+"Mechanizm: "+ChatColor.AQUA+"Power 1")){
