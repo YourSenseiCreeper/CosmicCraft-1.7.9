@@ -13,11 +13,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.*;
 
 import pl.gastherr.cosmic.ServerStats;
 import pl.gastherr.cosmic.player.Gracz;
 import pl.gastherr.cosmic.player.Staty;
+import pl.gastherr.cosmic.util.Mech;
 import pl.gastherr.cosmic.events.*;
 
 public class Main extends JavaPlugin implements Listener{
@@ -35,6 +37,18 @@ public class Main extends JavaPlugin implements Listener{
 	PickupItem PickupItem;
 	private API api;
 	public ServerStats statystyki;
+	private HashMap<String, Mech> mechs = new HashMap<>();
+	
+	public HashMap<String, Mech> getMechs(){
+		return mechs;
+	}
+	
+	//Loading all mechanisms;
+	private void loadMechs(){
+		mechs.put("Heal:1", new Mech("Heal", "Leczy", 1, 5, 5, 40, PotionEffectType.HEAL));
+		mechs.put("Heal:2", new Mech("Heal", "Leczy", 2, 10, 10, 100, PotionEffectType.HEAL));
+		mechs.put("Heal:3", new Mech("Heal", "Leczy", 3, 15, 20, 250, PotionEffectType.HEAL));
+	}
     
     
 	public String fixColors(String msg){
@@ -175,12 +189,16 @@ public class Main extends JavaPlugin implements Listener{
 		PlayerJoin = new PlayerJoin(this);
 		Signs = new Signs(this);
 		ItemsAfterDeath = new ItemsAfterDeath(this);
+		
 		getServer().getPluginManager().registerEvents(this, this);
 		getServer().getPluginManager().registerEvents(new PickupItem(this), this);
 		getServer().getPluginManager().registerEvents(new DropItem(this), this);
 		getServer().getPluginManager().registerEvents(new PlayerMove(this), this);
 		getServer().getPluginManager().registerEvents(new EntityDamage(this), this);
 		getServer().getPluginManager().registerEvents(new NPCInteract(this), this);
+		
+		loadMechs();
+		
 		Signs.registerItems();
 		ConsoleCommandSender kon = Bukkit.getConsoleSender();
 		registerPluginConfig();
