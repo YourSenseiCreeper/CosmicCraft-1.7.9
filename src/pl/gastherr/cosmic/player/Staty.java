@@ -6,11 +6,6 @@ public class Staty {
 	private float exp;
 	
 	private double kasa;
-	private double wydanaKasa;
-	private double zarobionaKasa;
-	private double otrzymanaKasa;
-	private int wykonanePrzelewy;
-	private double przelanaKasa;
 	
 	private int aktywowane_mechanizmy;
 	
@@ -28,18 +23,12 @@ public class Staty {
 	private int uz_proter;
 	private int uz_pread;
 	
-	public Staty(int lvl, float exp, double kasa, double wydanaKasa, double zarobionaKasa, double otrzymanaKasa,
-			int wykonanePrzelewy, double przelanaKasa, int aktywowane_mechanizmy, int mieczLvl,
+	public Staty(int lvl, float exp, double kasa, int aktywowane_mechanizmy, int mieczLvl,
 			int helmLvl, int klataLvl, int spodnieLvl, int butyLvl, int zabojstwa,
 			int smierci, int uz_instor, int uz_forter, int uz_proter, int uz_pread){
 		this.lvl = lvl;
 		this.exp = exp;
 		this.kasa = kasa;
-		this.wydanaKasa = wydanaKasa;
-		this.zarobionaKasa = zarobionaKasa;
-		this.otrzymanaKasa = otrzymanaKasa;
-		this.wykonanePrzelewy = wykonanePrzelewy;
-		this.przelanaKasa = przelanaKasa;
 		this.aktywowane_mechanizmy = aktywowane_mechanizmy;
 		this.zabojstwa = zabojstwa;
 		this.smierci = smierci;
@@ -82,56 +71,6 @@ public class Staty {
     public void setKasa(double kasa)
     {
         this.kasa = kasa;
-    }
-
-    public double getWydanaKasa()
-    {
-        return this.wydanaKasa;
-    }
- 
-    public void setWydanaKasa(double wydanaKasa)
-    {
-        this.wydanaKasa = wydanaKasa;
-    }
-    
-    public double getZarobionaKasa()
-    {
-        return this.zarobionaKasa;
-    }
- 
-    public void setZarobionaKasa(double zarobionaKasa)
-    {
-        this.zarobionaKasa = zarobionaKasa;
-    }
-
-    public double getOtrzymanaKasa()
-    {
-        return this.otrzymanaKasa;
-    }
- 
-    public void setOtrzymanaKasa(double otrzymanaKasa)
-    {
-        this.otrzymanaKasa = otrzymanaKasa;
-    }
-    
-    public int getWykonanePrzelewy()
-    {
-        return this.wykonanePrzelewy;
-    }
- 
-    public void setWykonanePrzelewy(int wykonanePrzelewy)
-    {
-        this.wykonanePrzelewy = wykonanePrzelewy;
-    }
-
-    public double getPrzelanaKasa()
-    {
-        return this.przelanaKasa;
-    }
- 
-    public void setPrzelanaKasa(double przelanaKasa)
-    {
-        this.przelanaKasa = przelanaKasa;
     }
     
     public int getAktywowaneMechanizmy()

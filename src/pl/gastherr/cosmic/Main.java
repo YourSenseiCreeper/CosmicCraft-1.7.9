@@ -12,6 +12,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.*;
@@ -37,7 +38,10 @@ public class Main extends JavaPlugin implements Listener{
 	PickupItem PickupItem;
 	private API api;
 	public ServerStats statystyki;
+	
 	private HashMap<String, Mech> mechs = new HashMap<>();
+	static HashMap<String, FileConfiguration> configs = new HashMap<>();
+	static String plugin_name = "CosmicCraft";
 	
 	public HashMap<String, Mech> getMechs(){
 		return mechs;
@@ -58,13 +62,7 @@ public class Main extends JavaPlugin implements Listener{
 	public void loadServerData(){
 		String prefix = "StatystykiSerwerowe.";
 		double kasa = getPluginConfig().getDouble(prefix+"Kasa");
-		double wydanaKasa = getPluginConfig().getDouble(prefix+"WydanaKasa");
-		double zarobionaKasa = getPluginConfig().getDouble(prefix+"ZarobionaKasa");
-		double otrzymanaKasa = getPluginConfig().getDouble(prefix+"OtrzymanaKasa");
-		int wykonanePrzelewy = getPluginConfig().getInt(prefix+"WykonanePrzelewy");
-		double przelanaKasa = getPluginConfig().getDouble(prefix+"PrzelanaKasa");
 		
-		int kupione_mechanizmy = getPluginConfig().getInt(prefix+"KupioneMechanizmy");
 		int aktywowane_mechanizmy = getPluginConfig().getInt(prefix+"AktywowaneMechanizmy");
 
 		int frakcjaInstor = getPluginConfig().getInt(prefix+"FrakcjaInstor");
@@ -74,8 +72,7 @@ public class Main extends JavaPlugin implements Listener{
 		
 		int liczbaOdwiedzin = getPluginConfig().getInt(prefix+"LiczbaOdwiedzin");
 		
-	    ServerStats server = new ServerStats(kasa, wydanaKasa, zarobionaKasa, otrzymanaKasa, wykonanePrzelewy,
-	    		przelanaKasa, kupione_mechanizmy, aktywowane_mechanizmy, frakcjaInstor, frakcjaForter,
+	    ServerStats server = new ServerStats(kasa, aktywowane_mechanizmy, frakcjaInstor, frakcjaForter,
 	    		frakcjaProter, frakcjaPread, liczbaOdwiedzin);
 	    statystyki = server;
 		
@@ -83,13 +80,6 @@ public class Main extends JavaPlugin implements Listener{
 	
 	public void saveServerData(){
 		double kasa = statystyki.getKasa();
-		double wydanaKasa = statystyki.getWydanaKasa();
-		double zarobionaKasa = statystyki.getZarobionaKasa();
-		double otrzymanaKasa = statystyki.getOtrzymanaKasa();
-		int wykonanePrzelewy = statystyki.getWykonanePrzelewy();
-		double przelanaKasa = statystyki.getPrzelanaKasa();
-		
-		int kupione_mechanizmy = statystyki.getKupioneMechanizmy();
 		int aktywowane_mechanizmy = statystyki.getAktywowaneMechanizmy();
 
 		int frakcjaInstor = statystyki.getFrakcjaInstor();
@@ -98,14 +88,8 @@ public class Main extends JavaPlugin implements Listener{
 		int frakcjaPread = statystyki.getFrakcjaPread();
 		
 		int liczbaOdwiedzin = statystyki.getLiczbaOdwiedzin();
-		
+
 		getPluginConfig().set("StatystykiSerwerowe.Kasa", kasa);
-		getPluginConfig().set("StatystykiSerwerowe.WydanaKasa", wydanaKasa);
-		getPluginConfig().set("StatystykiSerwerowe.ZarobionaKasa", zarobionaKasa);
-		getPluginConfig().set("StatystykiSerwerowe.OtrzymanaKasa", otrzymanaKasa);
-		getPluginConfig().set("StatystykiSerwerowe.WykonanePrzelewy", wykonanePrzelewy);
-		getPluginConfig().set("StatystykiSerwerowe.PrzelanaKasa", przelanaKasa);
-		getPluginConfig().set("StatystykiSerwerowe.KupioneMechanizmy", kupione_mechanizmy);
 		getPluginConfig().set("StatystykiSerwerowe.AktywowaneMechanizmy", aktywowane_mechanizmy);
 		getPluginConfig().set("StatystykiSerwerowe.FrakcjaInstor", frakcjaInstor);
 		getPluginConfig().set("StatystykiSerwerowe.FrakcjaForter", frakcjaForter);
@@ -125,17 +109,6 @@ public class Main extends JavaPlugin implements Listener{
 		int lvl = s.getLevel();
 		int pktpostepu = g.getPktPostepu();
 		double kasa = s.getKasa();
-		double wydanaKasa = s.getWydanaKasa();
-		double zarobionaKasa = s.getZarobionaKasa();
-		double przelanaKasa = s.getPrzelanaKasa();
-		double zgubionaKasa = s.getZarobionaKasa();
-		double otrzymanaKasa = s.getOtrzymanaKasa();
-		int wykonanePrzelewy = s.getWykonanePrzelewy();
-		boolean sound_exp = g.getSoundExp();
-		boolean sound_lvlup = g.getSoundLvlup();
-		boolean sound_teleport = g.getSoundTeleport();
-		boolean scoreboard_show = g.getScoreboardShow();
-		boolean sound_chat = g.getSoundChat();
 		int mieczLvl = s.getMieczLvl();
 		int helmLvl = s.getHelmLvl();
 		int klataLvl = s.getKlataLvl();
@@ -153,19 +126,7 @@ public class Main extends JavaPlugin implements Listener{
 		getGraczConfig(name).set("Dane.Exp", exp);
 		getGraczConfig(name).set("Dane.PktPostepu", pktpostepu);
 		getGraczConfig(name).set("Dane.Level", lvl);
-		getGraczConfig(name).set("Dane.Ekonomia.Kasa", kasa);
-		getGraczConfig(name).set("Dane.Ekonomia.WydanaKasa", wydanaKasa);
-		getGraczConfig(name).set("Dane.Ekonomia.ZarobionaKasa", zarobionaKasa);
-		getGraczConfig(name).set("Dane.Ekonomia.PrzelanaKasa", przelanaKasa);
-		getGraczConfig(name).set("Dane.Ekonomia.ZgubionaKasa", zgubionaKasa);
-		getGraczConfig(name).set("Dane.Ekonomia.OtrzymanaKasa", otrzymanaKasa);
-		getGraczConfig(name).set("Dane.Ekonomia.WykonanePrzelewy", wykonanePrzelewy);
-		getGraczConfig(name).set("Dane.Opcje.Dzwiek.Exp", sound_exp);
-		getGraczConfig(name).set("Dane.Opcje.Dzwiek.LvlUp", sound_lvlup);
-		getGraczConfig(name).set("Dane.Opcje.Dzwiek.Teleport", sound_teleport);
-		getGraczConfig(name).set("Dane.Opcje.Dzwiek.Chat", sound_chat);
-		getGraczConfig(name).set("Dane.Opcje.Dzwiek.Teleport", sound_teleport);
-		getGraczConfig(name).set("Dane.Opcje.Scoreboard.Pokaz", scoreboard_show);
+		getGraczConfig(name).set("Dane.Kasa", kasa);
 		getGraczConfig(name).set("Dane.Inwentarz.MieczLvl", mieczLvl);
 		getGraczConfig(name).set("Dane.Inwentarz.HelmLvl", helmLvl);
 		getGraczConfig(name).set("Dane.Inwentarz.KlataLvl", klataLvl);
@@ -204,7 +165,7 @@ public class Main extends JavaPlugin implements Listener{
 		registerPluginConfig();
 		addToPluginConfig();
 		loadServerData();
-		kon.sendMessage(ChatColor.WHITE+"["+ChatColor.AQUA+"CosmoCraft by gastherr"+ChatColor.WHITE+"] Uruchamianie...");
+		kon.sendMessage(ChatColor.WHITE+"["+ChatColor.AQUA+plugin_name+" by gastherr"+ChatColor.WHITE+"] Uruchamianie...");
 		Bukkit.getScheduler().runTaskTimer(this, new Runnable(){
 			@Override
 			public void run(){
@@ -233,7 +194,7 @@ public class Main extends JavaPlugin implements Listener{
 	public void onDisable() {
 		saveServerData();
 		ConsoleCommandSender kon = Bukkit.getConsoleSender();
-		kon.sendMessage(ChatColor.WHITE+"["+ChatColor.AQUA+"CosmoCraft by gastherr"+ChatColor.WHITE+"] Zapisywanie danych...");
+		kon.sendMessage(ChatColor.WHITE+"["+ChatColor.AQUA+plugin_name+" by gastherr"+ChatColor.WHITE+"] Zapisywanie danych...");
 		for (Player online : Bukkit.getOnlinePlayers()){
 			String puid = online.getUniqueId().toString();
 			saveUser(puid);
@@ -263,8 +224,6 @@ public class Main extends JavaPlugin implements Listener{
 		}
 
 	}
-	
-    static HashMap<String, FileConfiguration> configs = new HashMap<String, FileConfiguration>();
 	
 	public void registerGraczConfig(String name){
 		File file = new File(getDataFolder()+File.separator+"Gracze", name+".yml");
